@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import patternDividerDesktop from "../assets/pattern-divider-desktop.svg";
 import patternDividerMobile from "../assets/pattern-divider-mobile.svg";
@@ -28,7 +29,7 @@ export const Divider = styled.img.attrs({
   alt: "divider-pattern",
 })`
   user-select: none;
-  margin: 0.65rem 0;
+  margin: 0.7rem 0;
 `;
 
 export const AdviceText = styled.p`
@@ -47,9 +48,9 @@ export const AdviceText = styled.p`
 
 export const AdviceNumber = styled.p`
   color: var(--Neon-Green);
-  font-size: 0.925rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.25ch;
+  letter-spacing: 0.4ch;
   margin: 0;
 `;
 
@@ -77,17 +78,34 @@ export const GeneratorBox = styled.div`
   }
 `;
 
+async function getAdviceSlip() {
+  const adviceSlip = fetch("https://api.adviceslip.com/advice")
+    .then((res) => res.json())
+    .then((slip) => slip);
+  return adviceSlip;
+}
+
 const AdviceGenerator = ({ className, mobile }) => {
+  const [adviceSlip, setAdviceSlip] = useState({
+    slip: { id: "", advice: "" },
+  });
+
+  async function displayAdvice() {
+    const slip = await getAdviceSlip();
+    setAdviceSlip(slip);
+  }
+
+  useEffect(() => {
+    displayAdvice();
+  }, []);
+
   return (
     <GeneratorBox className={className}>
-      <AdviceNumber>Advice #117</AdviceNumber>
-      <AdviceText>
-        &ldquo;It is easy to sit up and take notice, what's difficult is getting
-        up and taking action.&rdquo;
-      </AdviceText>
+      <AdviceNumber>ADVICE #{adviceSlip.slip.id}</AdviceNumber>
+      <AdviceText>&ldquo;{adviceSlip.slip.advice}&rdquo;</AdviceText>
       <Divider src={mobile ? patternDividerMobile : patternDividerDesktop} />
       <DiceBox>
-        <DiceBtn />
+        <DiceBtn onClick={displayAdvice} />
       </DiceBox>
     </GeneratorBox>
   );
