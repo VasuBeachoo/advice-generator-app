@@ -1,4 +1,6 @@
+import { useState, useEffect } from "react";
 import styled from "styled-components";
+import GlobalStyle from "./GlobalStyle";
 import AdviceGenerator from "./components/AdviceGenerator";
 
 const AppContainer = styled.div`
@@ -10,9 +12,23 @@ const AppContainer = styled.div`
 `;
 
 const App = () => {
+  const [mobile, setMobile] = useState(false);
+
+  function handleResize() {
+    if (window.innerWidth <= 600) setMobile(true);
+    else setMobile(false);
+  }
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  });
+
   return (
     <AppContainer>
-      <AdviceGenerator />
+      <GlobalStyle />
+      <AdviceGenerator mobile={mobile} />
     </AppContainer>
   );
 };
