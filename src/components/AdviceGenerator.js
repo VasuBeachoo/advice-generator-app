@@ -79,7 +79,9 @@ export const GeneratorBox = styled.div`
 `;
 
 async function getAdviceSlip() {
-  const adviceSlip = fetch("https://api.adviceslip.com/advice")
+  const adviceSlip = fetch("https://api.adviceslip.com/advice", {
+    cache: "no-cache",
+  })
     .then((res) => res.json())
     .then((slip) => slip);
   return adviceSlip;
@@ -92,6 +94,7 @@ const AdviceGenerator = ({ className, mobile }) => {
 
   async function displayAdvice() {
     const slip = await getAdviceSlip();
+    console.log(slip);
     setAdviceSlip(slip);
   }
 
@@ -104,8 +107,8 @@ const AdviceGenerator = ({ className, mobile }) => {
       <AdviceNumber>ADVICE #{adviceSlip.slip.id}</AdviceNumber>
       <AdviceText>&ldquo;{adviceSlip.slip.advice}&rdquo;</AdviceText>
       <Divider src={mobile ? patternDividerMobile : patternDividerDesktop} />
-      <DiceBox>
-        <DiceBtn onClick={displayAdvice} />
+      <DiceBox onClick={displayAdvice}>
+        <DiceBtn />
       </DiceBox>
     </GeneratorBox>
   );
